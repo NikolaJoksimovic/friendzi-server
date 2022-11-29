@@ -1,11 +1,14 @@
 require("dotenv").config();
+require("express-async-errors");
 const express = require("express");
 const connectDB = require("./db/connectDB");
 const cors = require("cors");
 
 const app = express();
 const homeRouter = require("./routes/home");
+const authRouter = require("./routes/auth");
 const notFoundMiddleware = require("./middleware/notFound");
+const errorHandlerMiddleware = require("./middleware/errorHandler");
 
 app.use(cors());
 app.use(express.json());
@@ -13,6 +16,7 @@ app.use(express.json());
 
 // routes
 app.use("/", homeRouter);
+app.use("/auth", authRouter);
 
 // Cannot GET on refresh solution
 // app.get("*", (req, res) => {
@@ -21,6 +25,7 @@ app.use("/", homeRouter);
 
 // middleware
 app.use(notFoundMiddleware);
+app.use(errorHandlerMiddleware);
 
 // server
 const port = process.env.PORT || 8000;
