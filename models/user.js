@@ -22,6 +22,33 @@ const userSchema = mongoose.Schema({
     require: [true, "Password must be provided."],
     minlength: [3, "Password too short. (Minimum length: 3)."],
   },
+  firstName: {
+    type: String,
+  },
+  lastName: {
+    type: String,
+  },
+  dd: {
+    type: Number,
+    minlength: [1, "Please enter a valid date of birth"],
+    maxlength: [2, "Please enter a valid date of birth"],
+  },
+  mm: {
+    type: Number,
+    minlength: [1, "Please enter a valid date of birth"],
+    maxlength: [2, "Please enter a valid date of birth"],
+  },
+  yy: {
+    type: Number,
+    minlength: [4, "Please enter a valid date of birth"],
+    maxlength: [4, "Please enter a valid date of birth"],
+  },
+  sex: {
+    type: String,
+  },
+  workingStatus: {
+    type: String,
+  },
 });
 
 // middleware
@@ -41,7 +68,7 @@ userSchema.methods.getJWToken = function () {
   );
 };
 userSchema.methods.comparePasswords = async function (potentialPassword) {
-  const isMatch = await bcrypt.compare(this.password, potentialPassword);
+  const isMatch = await bcrypt.compare(potentialPassword, this.password);
   return isMatch;
 };
 
