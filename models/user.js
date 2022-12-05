@@ -9,39 +9,29 @@ const userSchema = mongoose.Schema({
   },
   email: {
     type: String,
-    require: [true, "Email must be provided."],
+    required: [true, "Email must be provided."],
     match: [
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
       "Please provide valid email.",
     ],
-    minlength: [6, "Plesse provide valid email(short)."],
+    minlength: [6, "Plesse provide valid email."],
     unique: [true, "There is already an account registred to this email."],
   },
   password: {
     type: String,
-    require: [true, "Password must be provided."],
-    minlength: [3, "Password too short. (Minimum length: 3)."],
+    required: [true, "Password must be provided."],
+    minlength: [3, "Password too short(Minimum length: 3)."],
   },
   firstName: {
     type: String,
+    maxlength: [10, "First name too long(Maximum length(10)."],
   },
   lastName: {
     type: String,
+    maxlength: [10, "First name too long(Maximum length(10)."],
   },
-  dd: {
-    type: Number,
-    minlength: [1, "Please enter a valid date of birth"],
-    maxlength: [2, "Please enter a valid date of birth"],
-  },
-  mm: {
-    type: Number,
-    minlength: [1, "Please enter a valid date of birth"],
-    maxlength: [2, "Please enter a valid date of birth"],
-  },
-  yy: {
-    type: Number,
-    minlength: [4, "Please enter a valid date of birth"],
-    maxlength: [4, "Please enter a valid date of birth"],
+  dob: {
+    type: String,
   },
   sex: {
     type: String,

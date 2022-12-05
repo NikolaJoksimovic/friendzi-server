@@ -8,6 +8,7 @@ const app = express();
 const homeRouter = require("./routes/home");
 const authRouter = require("./routes/auth");
 const onboardingRouter = require("./routes/onboarding");
+const dashboardRouter = require("./routes/dashboard");
 const notFoundMiddleware = require("./middleware/notFound");
 const errorHandlerMiddleware = require("./middleware/errorHandler");
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use("/", homeRouter);
 app.use("/auth", authRouter);
 app.use("/onboarding", onboardingRouter);
+app.use("/dashboard", dashboardRouter);
 
 // Cannot GET on refresh solution
 // app.get("*", (req, res) => {

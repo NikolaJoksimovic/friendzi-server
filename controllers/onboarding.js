@@ -3,7 +3,7 @@ const { AuthenticationError, BadRequestError } = require("../errors");
 const { StatusCodes } = require("http-status-codes");
 
 const updateUser = async (req, res) => {
-  const { userId, firstName, lastName, dd, mm, yy, sex, workingStatus } = {
+  const { userId, firstName, lastName, dob, sex, workingStatus } = {
     ...req.body,
   };
   console.log({ ...req.body });
@@ -12,9 +12,7 @@ const updateUser = async (req, res) => {
     {
       firstName: firstName,
       lastName: lastName,
-      dd: dd,
-      mm: mm,
-      yy: yy,
+      dob: dob,
       sex: sex,
       workingStatus: workingStatus,
     }
