@@ -1,5 +1,9 @@
 const User = require("../models/user");
-const { AuthenticationError, BadRequestError } = require("../errors");
+const {
+  AuthenticationError,
+  BadRequestError,
+  CustomAPIError,
+} = require("../errors");
 const { StatusCodes } = require("http-status-codes");
 
 const updateUser = async (req, res) => {
@@ -24,4 +28,13 @@ const updateUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ ...req.body });
 };
 
-module.exports = updateUser;
+const getUserInfo = async (req, res) => {
+  const user_id = req.body;
+  const user = await User.findOne(user_id);
+  if (!user) {
+    throw new CustomAPIError("Server is busy right now.");
+  }
+  res.status(StatusCodes.OK).json(user);
+};
+
+module.exports = { updateUser, getUserInfo };
