@@ -29,8 +29,8 @@ const updateUser = async (req, res) => {
 };
 
 const getUserInfo = async (req, res) => {
-  const user_id = req.body;
-  const user = await User.findOne(user_id);
+  const user_id = req.body.userId;
+  const user = await User.findOne({ user_id });
   if (!user) {
     throw new CustomAPIError("Server is busy right now.");
   }
