@@ -39,6 +39,11 @@ const userSchema = mongoose.Schema({
   workingStatus: {
     type: String,
   },
+  events: [
+    {
+      type: Number,
+    },
+  ],
 });
 
 // middleware
