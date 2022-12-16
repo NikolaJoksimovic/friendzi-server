@@ -41,7 +41,7 @@ const userSchema = mongoose.Schema({
   },
   events: [
     {
-      type: Number,
+      type: String,
     },
   ],
 });

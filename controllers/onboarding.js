@@ -1,9 +1,5 @@
 const User = require("../models/user");
-const {
-  AuthenticationError,
-  BadRequestError,
-  CustomAPIError,
-} = require("../errors");
+const { AuthenticationError, CustomAPIError } = require("../errors");
 const { StatusCodes } = require("http-status-codes");
 
 const updateUser = async (req, res) => {

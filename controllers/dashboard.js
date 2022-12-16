@@ -6,6 +6,8 @@ const {
   CustomAPIError,
 } = require("../errors");
 const { StatusCodes } = require("http-status-codes");
+const user = require("../models/user");
+const event = require("../models/event");
 
 // FIND USER
 const findUser = async (req, res) => {
@@ -33,7 +35,9 @@ const bookEvent = async (req, res) => {
   } else {
     const userEvents = user.events;
     if (userEvents.length != 0) {
-      throw new BadRequestError("Sorry, but you can book only one event.");
+      throw new BadRequestError(
+        "You already have a booked event. Check your schedule."
+      );
     }
   }
 
@@ -51,7 +55,7 @@ const bookEvent = async (req, res) => {
   } else {
     // change to 5 later
     if (event.users.length === 5) {
-      throw new BadRequestError("This date and time is already booked");
+      throw new BadRequestError("This date and time is already booked.");
     }
     try {
       const newUsers = event.users;
@@ -68,4 +72,23 @@ const bookEvent = async (req, res) => {
   res.send({ ...req.body });
 };
 
-module.exports = { bookEvent, findUser };
+const getUserEvetns = async (req, res) => {
+  const { user_id } = { ...req.body };
+  const user = await User.findOne({ user_id: user_id });
+  if (!user) {
+    throw new CustomAPIError(
+      "Server is currently busy... Please try again later."
+    );
+  }
+  const events = user.events;
+  const responsePackage = Object.entries(events).map((entrie) => {
+    const responseString = '{"event_id":' + `"${entrie[1]}"}`;
+    console.log({ responseString });
+    return JSON.parse(responseString);
+  });
+  console.log(responsePackage);
+
+  res.status(StatusCodes.OK).json(events);
+};
+
+module.exports = { bookEvent, findUser, getUserEvetns };
