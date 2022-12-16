@@ -85,6 +85,14 @@ const getUserEvetns = async (req, res) => {
     return entrie[1];
   });
 
+  eventsArray.sort(function (a, b) {
+    const ad = a.substring(0, 2);
+    const am = a.substring(2, 4);
+    const bd = b.substring(0, 2);
+    const bm = b.substring(2, 4);
+    return am + 1 === bm ? -1 : am === bm ? (ad < bd ? -1 : 1) : 1;
+  });
+
   const newArray = await Promise.all(
     eventsArray.map(async (eventId) => {
       const event = await Event.findOne({ event_id: eventId });
