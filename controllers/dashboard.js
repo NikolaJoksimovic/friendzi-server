@@ -81,14 +81,29 @@ const getUserEvetns = async (req, res) => {
     );
   }
   const events = user.events;
-  const responsePackage = Object.entries(events).map((entrie) => {
-    const responseString = '{"event_id":' + `"${entrie[1]}"}`;
-    console.log({ responseString });
-    return JSON.parse(responseString);
+  const eventsArray = Object.entries(events).map((entrie) => {
+    return entrie[1];
   });
-  console.log(responsePackage);
 
-  res.status(StatusCodes.OK).json(events);
+  const newArray = await Promise.all(
+    eventsArray.map(async (eventId) => {
+      const event = await Event.findOne({ event_id: eventId });
+      if (event) {
+        let eventString = `{"event_id":"${eventId}","users":[${event.users.map(
+          (user) => {
+            return `"${user}"`;
+          }
+        )}]}`;
+        return JSON.parse(eventString);
+      } else {
+        throw new CustomAPIError(
+          "Server is currently busy... Please try again later."
+        );
+      }
+    })
+  );
+
+  res.status(StatusCodes.OK).json(newArray);
 };
 
 module.exports = { bookEvent, findUser, getUserEvetns };
