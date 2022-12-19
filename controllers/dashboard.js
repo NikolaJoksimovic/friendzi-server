@@ -8,6 +8,7 @@ const {
 const { StatusCodes } = require("http-status-codes");
 const user = require("../models/user");
 const event = require("../models/event");
+const { filterInvalidEvents } = require("../functions/dashboard");
 
 // FIND USER
 const findUser = async (req, res) => {
@@ -18,7 +19,6 @@ const findUser = async (req, res) => {
   if (!user) {
     throw new AuthenticationError("Could find the user with current id");
   }
-  console.log(user);
   res
     .status(StatusCodes.OK)
     .json({ firstName: user.firstName, lastName: user.lastName });
@@ -72,6 +72,7 @@ const bookEvent = async (req, res) => {
   res.send({ ...req.body });
 };
 
+// GET USER EVENTS
 const getUserEvetns = async (req, res) => {
   const { user_id } = { ...req.body };
   const user = await User.findOne({ user_id: user_id });
@@ -85,16 +86,10 @@ const getUserEvetns = async (req, res) => {
     return entrie[1];
   });
 
-  eventsArray.sort(function (a, b) {
-    const ad = a.substring(0, 2);
-    const am = a.substring(2, 4);
-    const bd = b.substring(0, 2);
-    const bm = b.substring(2, 4);
-    return am + 1 === bm ? -1 : am === bm ? (ad < bd ? -1 : 1) : 1;
-  });
+  const validEvents = await filterInvalidEvents(eventsArray, user_id);
 
   const newArray = await Promise.all(
-    eventsArray.map(async (eventId) => {
+    validEvents.map(async (eventId) => {
       const event = await Event.findOne({ event_id: eventId });
       if (event) {
         let eventString = `{"event_id":"${eventId}","users":[${event.users.map(
@@ -110,7 +105,7 @@ const getUserEvetns = async (req, res) => {
       }
     })
   );
-
+  // I should return only non expired dates..
   res.status(StatusCodes.OK).json(newArray);
 };
 
