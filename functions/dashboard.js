@@ -2,17 +2,22 @@ const { BadRequestError } = require("../errors");
 const User = require("../models/user");
 
 const filterInvalidEvents = async (array, user_id) => {
-  console.log("starting array:" + array);
-
   const currDate = new Date();
-  // event example: '18122100cocktails'
-  const validEvents = array.filter(
-    (event) =>
-      event.substring(2, 4) > currDate.getMonth() ||
-      (event.substring(2, 4) === currDate.getMonth() &&
-        event.substring(0, 2) > currDate.getDate()) ||
-      event.substring(4, 6) > currDate.getHours()
-  );
+  const validEvents = array.filter((event) => {
+    // event example: '18122100cocktails'
+    const day = event.substring(0, 2);
+    const month = event.substring(2, 4);
+    const hours = event.substring(4, 6);
+
+    // make new date for event
+    const eventDate = new Date();
+    eventDate.setMonth(month - 1);
+    eventDate.setDate(day);
+    eventDate.setHours(hours);
+
+    return eventDate.getTime() > currDate.getTime();
+    // maybe delete the event here if its the last user.
+  });
 
   validEvents.sort(function (a, b) {
     const ad = a.substring(0, 2);
@@ -22,7 +27,6 @@ const filterInvalidEvents = async (array, user_id) => {
     return am + 1 === bm ? -1 : am === bm ? (ad < bd ? -1 : 1) : 1;
   });
 
-  console.log("valid events:" + validEvents);
   const user = await User.findOneAndUpdate(
     { user_id: user_id },
     { events: validEvents }

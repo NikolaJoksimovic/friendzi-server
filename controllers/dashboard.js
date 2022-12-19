@@ -87,26 +87,27 @@ const getUserEvetns = async (req, res) => {
   });
 
   const validEvents = await filterInvalidEvents(eventsArray, user_id);
-
-  const newArray = await Promise.all(
-    validEvents.map(async (eventId) => {
-      const event = await Event.findOne({ event_id: eventId });
-      if (event) {
-        let eventString = `{"event_id":"${eventId}","users":[${event.users.map(
-          (user) => {
-            return `"${user}"`;
-          }
-        )}]}`;
-        return JSON.parse(eventString);
-      } else {
-        throw new CustomAPIError(
-          "Server is currently busy... Please try again later."
-        );
-      }
-    })
-  );
-  // I should return only non expired dates..
-  res.status(StatusCodes.OK).json(newArray);
+  if (validEvents) {
+    const newArray = await Promise.all(
+      validEvents.map(async (eventId) => {
+        const event = await Event.findOne({ event_id: eventId });
+        if (event) {
+          let eventString = `{"event_id":"${eventId}","users":[${event.users.map(
+            (user) => {
+              return `"${user}"`;
+            }
+          )}]}`;
+          return JSON.parse(eventString);
+        } else {
+          throw new CustomAPIError(
+            "Server is currently busy... Please try again later."
+          );
+        }
+      })
+    );
+    return res.status(StatusCodes.OK).json(newArray);
+  }
+  res.status(StatusCodes.OK).json(eventsArray);
 };
 
 module.exports = { bookEvent, findUser, getUserEvetns };
