@@ -11,6 +11,7 @@ const onboardingRouter = require("./routes/onboarding");
 const dashboardRouter = require("./routes/dashboard");
 const notFoundMiddleware = require("./middleware/notFound");
 const errorHandlerMiddleware = require("./middleware/errorHandler");
+const authenticationMiddleware = require("./middleware/auth");
 
 app.use(cors());
 app.use(express.json());
@@ -20,7 +21,7 @@ app.use(express.json());
 app.use("/", homeRouter);
 app.use("/auth", authRouter);
 app.use("/onboarding", onboardingRouter);
-app.use("/dashboard", dashboardRouter);
+app.use("/dashboard", authenticationMiddleware, dashboardRouter);
 
 // Cannot GET on refresh solution
 // app.get("*", (req, res) => {

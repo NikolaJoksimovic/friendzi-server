@@ -1,5 +1,5 @@
-const { BadRequestError } = require("../errors");
 const User = require("../models/user");
+const Event = require("../models/event");
 
 const filterInvalidEvents = async (array, user_id) => {
   const currDate = new Date();
@@ -27,15 +27,7 @@ const filterInvalidEvents = async (array, user_id) => {
     return am + 1 === bm ? -1 : am === bm ? (ad < bd ? -1 : 1) : 1;
   });
 
-  const user = await User.findOneAndUpdate(
-    { user_id: user_id },
-    { events: validEvents }
-  );
-  if (!user)
-    throw new BadRequestError(
-      "Server is busy right now... Please try again later."
-    );
-
+  await User.findOneAndUpdate({ user_id: user_id }, { events: validEvents });
   return validEvents;
 };
 
