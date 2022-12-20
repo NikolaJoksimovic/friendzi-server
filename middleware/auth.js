@@ -11,7 +11,6 @@ const authenticationMiddleware = async (req, res, next) => {
   const token = authHeader.split(" ")[1];
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(payload);
     req.body.user_id = payload.id;
   } catch (error) {
     throw new AuthenticationError("Token not provided(Bad Token).");

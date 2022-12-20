@@ -12,7 +12,6 @@ const { filterInvalidEvents } = require("../functions/dashboard");
 
 // FIND USER
 const findUser = async (req, res) => {
-  console.log(req.body);
   const { user_id } = {
     ...req.body,
   };
@@ -23,6 +22,18 @@ const findUser = async (req, res) => {
   res
     .status(StatusCodes.OK)
     .json({ firstName: user.firstName, lastName: user.lastName });
+};
+
+// FIND EVENT
+const findEvent = async (req, res) => {
+  const { event_id } = { ...req.body };
+  const event = await Event.findOne({ event_id: event_id });
+  if (!event) {
+    throw new BadRequestError(
+      "Server is currently busy... Please try again later."
+    );
+  }
+  res.status(StatusCodes.OK).json({ users: event.users });
 };
 
 // BOOK EVENT
@@ -48,7 +59,6 @@ const bookEvent = async (req, res) => {
       event = await Event.create({ event_id: event_id, users: [user_id] });
       await User.findOneAndUpdate({ user_id }, { events: [event_id] });
     } catch (error) {
-      console.log(error);
       throw new CustomAPIError(
         "Server is currently busy... Please try again later."
       );
@@ -95,4 +105,33 @@ const getUserEvetns = async (req, res) => {
   }
 };
 
-module.exports = { bookEvent, findUser, getUserEvetns };
+const getAllEventUsers = async (req, res) => {
+  const { users } = { ...req.body };
+  const response = await Promise.all(
+    users.map(async (userId) => {
+      const userData = await User.findOne({ user_id: userId });
+      const { dob, firstName, lastName, sex, workingStatus } = userData;
+      return {
+        user_id: userId,
+        dob: dob,
+        firstName: firstName,
+        lastName: lastName,
+        sex: sex,
+        workingStatus: workingStatus,
+      };
+    })
+  );
+  if (!response) {
+    throw new BadRequestError("Something went wrong. Couldn't filter events.");
+  }
+  console.log(response);
+  res.status(StatusCodes.OK).json(response);
+};
+
+module.exports = {
+  findUser,
+  bookEvent,
+  getUserEvetns,
+  findEvent,
+  getAllEventUsers,
+};
