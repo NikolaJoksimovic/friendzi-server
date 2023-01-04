@@ -55,7 +55,8 @@ const start = async () => {
     // socket.io config
     io.on("connection", (socket) => {
       console.log(`user ${socket.id} connected..`);
-      io.on("disconnect", (socket) => {
+
+      socket.on("disconnect", () => {
         console.log(`user ${socket.id} disconnected..`);
       });
     });

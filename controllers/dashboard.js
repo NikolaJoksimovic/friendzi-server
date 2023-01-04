@@ -99,7 +99,6 @@ const getUserEvetns = async (req, res) => {
 
   try {
     const validEvents = await filterInvalidEvents(eventsArray, user_id);
-    console.log(validEvents);
     return res.status(StatusCodes.OK).json(validEvents);
   } catch (error) {
     throw new BadRequestError("Something went wrong. Couldn't filter events.");
@@ -125,7 +124,6 @@ const getAllEventUsers = async (req, res) => {
   if (!response) {
     throw new BadRequestError("Something went wrong. Couldn't filter events.");
   }
-  console.log(response);
   res.status(StatusCodes.OK).json(response);
 };
 
