@@ -1,5 +1,4 @@
 const User = require("../models/user");
-const Event = require("../models/event");
 
 const filterInvalidEvents = async (array, user_id) => {
   const currDate = new Date();
@@ -15,7 +14,10 @@ const filterInvalidEvents = async (array, user_id) => {
     eventDate.setDate(day);
     eventDate.setHours(hours);
 
-    return eventDate.getTime() > currDate.getTime();
+    return (
+      eventDate.getTime() > currDate.getTime() &&
+      eventDate.getDate() < currDate.getDate() + 7
+    );
     // maybe delete the event here if its the last user.
   });
 

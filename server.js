@@ -3,8 +3,18 @@ require("express-async-errors");
 const express = require("express");
 const connectDB = require("./db/connectDB");
 const cors = require("cors");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+  },
+});
+
+// my modules
 const homeRouter = require("./routes/home");
 const authRouter = require("./routes/auth");
 const onboardingRouter = require("./routes/onboarding");
@@ -38,8 +48,16 @@ const port = process.env.PORT || 8000;
 const start = async () => {
   try {
     await connectDB(process.env.JWT_URI);
-    app.listen(port, () => {
+    httpServer.listen(port, () => {
       console.log("Server is up and running on port " + port + "...");
+    });
+
+    // socket.io config
+    io.on("connection", (socket) => {
+      console.log(`user ${socket.id} connected..`);
+      io.on("disconnect", (socket) => {
+        console.log(`user ${socket.id} disconnected..`);
+      });
     });
   } catch (error) {}
 };
