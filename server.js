@@ -5,6 +5,7 @@ const connectDB = require("./db/connectDB");
 const cors = require("cors");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const configSocket = require("./sockets/socket_config");
 
 const app = express();
 const httpServer = createServer(app);
@@ -51,22 +52,8 @@ const start = async () => {
     httpServer.listen(port, () => {
       console.log("Server is up and running on port " + port + "...");
     });
-
     // socket.io config
-    io.on("connection", (socket) => {
-      console.log(`user ${socket.id} connected..`);
-
-      socket.on("join_chat", ({ room_id }) => {
-        socket.join(room_id);
-      });
-
-      socket.on("exit_chat", () => {
-        socket.disconnect();
-      });
-      socket.on("disconnect", () => {
-        console.log(`user ${socket.id} disconnected..`);
-      });
-    });
+    configSocket(io);
   } catch (error) {}
 };
 
