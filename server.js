@@ -5,7 +5,7 @@ const connectDB = require("./db/connectDB");
 const cors = require("cors");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
-const configSocket = require("./sockets/socket_config");
+const socketConfig = require("./sockets/socket_config");
 
 const app = express();
 const httpServer = createServer(app);
@@ -53,7 +53,7 @@ const start = async () => {
       console.log("Server is up and running on port " + port + "...");
     });
     // socket.io config
-    configSocket(io);
+    socketConfig(io);
   } catch (error) {}
 };
 
