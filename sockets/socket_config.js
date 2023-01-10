@@ -6,7 +6,6 @@ module.exports = socketConfig = (io) => {
       socket.join(room_id);
     });
     socket.on("client_pkg", (pkgData) => {
-      console.log(pkgData);
       socket.to(pkgData.room_id).emit("server_pkg", pkgData);
     });
     socket.on("exit_chat", () => {

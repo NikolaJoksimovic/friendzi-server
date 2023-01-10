@@ -105,6 +105,7 @@ const getUserEvetns = async (req, res) => {
   }
 };
 
+// GET ALL USERS FOR AN EVENT
 const getAllEventUsers = async (req, res) => {
   const { users } = { ...req.body };
   const response = await Promise.all(
@@ -127,10 +128,28 @@ const getAllEventUsers = async (req, res) => {
   res.status(StatusCodes.OK).json(response);
 };
 
+// UPDATE CHAT LOG
+const updateChatLog = async (req, res) => {
+  const { data, event_id } = { ...req.body };
+  // console.log(data, event_id);
+  try {
+    const response = await Event.findOneAndUpdate(
+      { event_id: event_id },
+      { $push: { messages: data } }
+    );
+  } catch (error) {
+    throw new CustomAPIError(
+      "Something went wrong. Couldn't update the chatLog.."
+    );
+  }
+  res.send("jej");
+};
+
 module.exports = {
   findUser,
   bookEvent,
   getUserEvetns,
   findEvent,
   getAllEventUsers,
+  updateChatLog,
 };
