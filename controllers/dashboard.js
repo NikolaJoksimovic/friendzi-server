@@ -131,18 +131,27 @@ const getAllEventUsers = async (req, res) => {
 // UPDATE CHAT LOG
 const updateChatLog = async (req, res) => {
   const { data, event_id } = { ...req.body };
-  // console.log(data, event_id);
-  try {
-    const response = await Event.findOneAndUpdate(
-      { event_id: event_id },
-      { $push: { messages: data } }
-    );
-  } catch (error) {
+  const response = await Event.findOneAndUpdate(
+    { event_id: event_id },
+    { $push: { messages: data } }
+  );
+  if (!response) {
     throw new CustomAPIError(
-      "Something went wrong. Couldn't update the chatLog.."
+      "Something went wrong. Couldn't update the chat log."
     );
   }
-  res.send("jej");
+  res.send("");
+};
+
+const getChatHistory = async (req, res) => {
+  const { room_id } = { ...req.body };
+  const response = await Event.findOne({ event_id: room_id });
+  if (!response) {
+    throw new CustomAPIError(
+      "Something went wrong. Couldn't find the chat log."
+    );
+  }
+  res.status(StatusCodes.OK).json({ data: response.messages });
 };
 
 module.exports = {
@@ -152,4 +161,5 @@ module.exports = {
   findEvent,
   getAllEventUsers,
   updateChatLog,
+  getChatHistory,
 };
