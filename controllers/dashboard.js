@@ -6,9 +6,10 @@ const {
   CustomAPIError,
 } = require("../errors");
 const { StatusCodes } = require("http-status-codes");
-const user = require("../models/user");
-const event = require("../models/event");
-const { filterInvalidEvents } = require("../functions/dashboard");
+const {
+  deleteInvalidEvents,
+  filterInvalidEvents,
+} = require("../functions/dashboard");
 
 // FIND USER
 const findUser = async (req, res) => {
@@ -38,6 +39,10 @@ const findEvent = async (req, res) => {
 
 // BOOK EVENT
 const bookEvent = async (req, res) => {
+  // You should be leaning database(invalid events) when you book an event
+  deleteInvalidEvents();
+  // *********************
+
   const { event_id, user_id } = { ...req.body };
   const user = await User.findOne({ user_id });
   if (!user) {
@@ -46,7 +51,8 @@ const bookEvent = async (req, res) => {
     );
   } else {
     const userEvents = user.events;
-    if (userEvents.length != 0) {
+    const filteredEvents = await filterInvalidEvents(userEvents, user_id);
+    if (filteredEvents.length != 0) {
       throw new BadRequestError(
         "You already have a booked event. Check your schedule."
       );
@@ -83,28 +89,6 @@ const bookEvent = async (req, res) => {
   res.send({ ...req.body });
 };
 
-// GET USER EVENTS
-const getUserEvetns = async (req, res) => {
-  const { user_id } = { ...req.body };
-  const user = await User.findOne({ user_id: user_id });
-  if (!user) {
-    throw new CustomAPIError(
-      "Server is currently busy... Please try again later."
-    );
-  }
-  const events = user.events;
-  const eventsArray = Object.entries(events).map((entrie) => {
-    return entrie[1];
-  });
-
-  try {
-    const validEvents = await filterInvalidEvents(eventsArray, user_id);
-    return res.status(StatusCodes.OK).json(validEvents);
-  } catch (error) {
-    throw new BadRequestError("Something went wrong. Couldn't filter events.");
-  }
-};
-
 // GET ALL USERS FOR AN EVENT
 const getAllEventUsers = async (req, res) => {
   const { users } = { ...req.body };
@@ -128,38 +112,9 @@ const getAllEventUsers = async (req, res) => {
   res.status(StatusCodes.OK).json(response);
 };
 
-// UPDATE CHAT LOG
-const updateChatLog = async (req, res) => {
-  const { data, event_id } = { ...req.body };
-  const response = await Event.findOneAndUpdate(
-    { event_id: event_id },
-    { $push: { messages: data } }
-  );
-  if (!response) {
-    throw new CustomAPIError(
-      "Something went wrong. Couldn't update the chat log."
-    );
-  }
-  res.send("");
-};
-
-const getChatHistory = async (req, res) => {
-  const { room_id } = { ...req.body };
-  const response = await Event.findOne({ event_id: room_id });
-  if (!response) {
-    throw new CustomAPIError(
-      "Something went wrong. Couldn't find the chat log."
-    );
-  }
-  res.status(StatusCodes.OK).json({ data: response.messages });
-};
-
 module.exports = {
   findUser,
   bookEvent,
-  getUserEvetns,
   findEvent,
   getAllEventUsers,
-  updateChatLog,
-  getChatHistory,
 };

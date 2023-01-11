@@ -20,6 +20,7 @@ const homeRouter = require("./routes/home");
 const authRouter = require("./routes/auth");
 const onboardingRouter = require("./routes/onboarding");
 const dashboardRouter = require("./routes/dashboard");
+const myeventsRouter = require("./routes/my_evetns");
 const notFoundMiddleware = require("./middleware/notFound");
 const errorHandlerMiddleware = require("./middleware/errorHandler");
 const authenticationMiddleware = require("./middleware/auth");
@@ -33,6 +34,7 @@ app.use("/", homeRouter);
 app.use("/auth", authRouter);
 app.use("/onboarding", onboardingRouter);
 app.use("/dashboard", authenticationMiddleware, dashboardRouter);
+app.use("/dashboard/myevents", authenticationMiddleware, myeventsRouter);
 
 // Cannot GET on refresh solution
 // app.get("*", (req, res) => {
