@@ -20,9 +20,12 @@ const findUser = async (req, res) => {
   if (!user) {
     throw new AuthenticationError("Could find the user with current id");
   }
-  res
-    .status(StatusCodes.OK)
-    .json({ firstName: user.firstName, lastName: user.lastName });
+  res.status(StatusCodes.OK).json({
+    firstName: user.firstName,
+    lastName: user.lastName,
+    // mozda ovde bude null pa ne moze..
+    profileImg: user.img_url,
+  });
 };
 
 // FIND EVENT

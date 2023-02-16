@@ -11,7 +11,7 @@ const { StatusCodes } = require("http-status-codes");
 
 // update user
 const updateUser = async (req, res) => {
-  const { userId, firstName, lastName, dob, sex, workingStatus } = {
+  const { userId, firstName, lastName, dob, sex, workingStatus, img_url } = {
     ...req.body,
   };
   const user = await User.findOneAndUpdate(
@@ -22,6 +22,7 @@ const updateUser = async (req, res) => {
       dob: dob,
       sex: sex,
       workingStatus: workingStatus,
+      img_url: img_url,
     }
   );
   if (!user) {
@@ -78,13 +79,13 @@ const uploadUserImg = async (req, res) => {
     );
   }
   // jos da stavimo url u usera...
-  const user = await User.findOneAndUpdate(
-    { user_id: user_id },
-    { img_url: img_url }
-  );
-  if (!user) {
-    throw new AuthenticationError("Could find the user with current id");
-  }
+  // const user = await User.findOneAndUpdate(
+  //   { user_id: user_id },
+  //   { img_url: img_url }
+  // );
+  // if (!user) {
+  //   throw new AuthenticationError("Could find the user with current id");
+  // }
 
   res.status(StatusCodes.OK).json({ img_url: img_url });
 };
