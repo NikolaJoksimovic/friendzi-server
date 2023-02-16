@@ -26,7 +26,8 @@ const errorHandlerMiddleware = require("./middleware/errorHandler");
 const authenticationMiddleware = require("./middleware/auth");
 
 app.use(cors());
-app.use(express.json());
+// setting the file size kinda(research this more)
+app.use(express.json({ limit: "10mb" }));
 // app.use(express.static("public/build"));
 
 // routes
