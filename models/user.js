@@ -39,6 +39,9 @@ const userSchema = mongoose.Schema({
   workingStatus: {
     type: String,
   },
+  img_url: {
+    type: String,
+  },
   events: [
     {
       type: String,

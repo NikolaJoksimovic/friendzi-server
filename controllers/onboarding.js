@@ -2,7 +2,11 @@ require("dotenv").config;
 const cloudinary = require("cloudinary").v2;
 
 const User = require("../models/user");
-const { AuthenticationError, CustomAPIError } = require("../errors");
+const {
+  AuthenticationError,
+  CustomAPIError,
+  BadRequestError,
+} = require("../errors");
 const { StatusCodes } = require("http-status-codes");
 
 // update user
@@ -53,7 +57,7 @@ const uploadUserImg = async (req, res) => {
   const { user_id, image } = { ...req.body };
   // console.log({ ...req.body });
 
-  const response = await new Promise((resolve, reject) => {
+  const img_url = await new Promise((resolve, reject) => {
     cloudinary.uploader.upload(image, opts, (error, result) => {
       if (result && result.secure_url) {
         return resolve(result.secure_url);
@@ -68,11 +72,21 @@ const uploadUserImg = async (req, res) => {
       return err;
     });
 
-  if (response) {
-    console.log("url is: " + response);
+  if (!img_url) {
+    throw new BadRequestError(
+      "Cant upload this image... Something went wrong."
+    );
+  }
+  // jos da stavimo url u usera...
+  const user = await User.findOneAndUpdate(
+    { user_id: user_id },
+    { img_url: img_url }
+  );
+  if (!user) {
+    throw new AuthenticationError("Could find the user with current id");
   }
 
-  res.status(StatusCodes.OK).json(user_id);
+  res.status(StatusCodes.OK).json({ img_url: img_url });
 };
 
 module.exports = { updateUser, getUserInfo, uploadUserImg };
