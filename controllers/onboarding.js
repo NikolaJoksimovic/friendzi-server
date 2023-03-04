@@ -11,7 +11,7 @@ const { StatusCodes } = require("http-status-codes");
 
 // update user
 const updateUser = async (req, res) => {
-  const { userId, firstName, lastName, dob, sex, workingStatus, img_url } = {
+  const { userId, firstName, lastName, dob, sex, ig_at, img_url } = {
     ...req.body,
   };
   const user = await User.findOneAndUpdate(
@@ -21,7 +21,7 @@ const updateUser = async (req, res) => {
       lastName: lastName,
       dob: dob,
       sex: sex,
-      workingStatus: workingStatus,
+      ig_at: ig_at,
       img_url: img_url,
     }
   );
@@ -56,7 +56,6 @@ const opts = {
 
 const uploadUserImg = async (req, res) => {
   const { user_id, image } = { ...req.body };
-  // console.log({ ...req.body });
 
   const img_url = await new Promise((resolve, reject) => {
     cloudinary.uploader.upload(image, opts, (error, result) => {

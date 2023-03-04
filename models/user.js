@@ -36,7 +36,7 @@ const userSchema = mongoose.Schema({
   sex: {
     type: String,
   },
-  workingStatus: {
+  ig_at: {
     type: String,
   },
   img_url: {

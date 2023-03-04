@@ -25,6 +25,7 @@ const findUser = async (req, res) => {
     lastName: user.lastName,
     // mozda ovde bude null pa ne moze..
     profileImg: user.img_url,
+    ig_at: user.ig_at,
   });
 };
 
