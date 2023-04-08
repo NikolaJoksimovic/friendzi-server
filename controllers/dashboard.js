@@ -43,7 +43,7 @@ const findEvent = async (req, res) => {
 
 // BOOK EVENT
 const bookEvent = async (req, res) => {
-  // You should be leaning database(invalid events) when you book an event
+  // You should be cleaning database(invalid events) when you book an event
   deleteInvalidEvents();
   // *********************
 
